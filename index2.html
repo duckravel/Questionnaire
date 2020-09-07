@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</head>
+<style>
+    .form-control-custom{
+        display: inline;
+    }
+    .audio-form{
+        display: flex;
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between" id='menu'>
+        <div class='navbar-brand'>Prototype_v1</div>
+        <div><button type="submit" class="btn btn-primary btn-sm">Submit</button>
+        </div>
+    </nav>
+        <div class='row'>
+            <div class="col-md-4 bg-white" id='data'>
+                <form action="" class="p-2">
+                    <div class="form-group">
+                        <label for="Name" class="">Place</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='Name'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="AlternateName" class="">Alternative Name</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='AlternateName'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="genre">Category</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='genre'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="abstract">Description</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='abstract'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="time-s">Start-Time</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='time-s'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="time-e">Start-End</label>
+                        <div class='audio-form'>
+                            <input type="text" class="form-control form-control-sm form-control-custom" id='time-e'>
+                            <button type="submit" class="btn btn-primary btn-sm"> <i class="fa fa-microphone" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8 bg-white">
+                <div class="p-2" >
+                    <iframe id='map1' src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c
+                    " frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+</body>
+<script src="/js/script.js"></script>
+</html>

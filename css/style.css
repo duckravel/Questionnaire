@@ -1,0 +1,7 @@
+.homebg{
+    height: 95vh;
+    width: 100vw;
+    background-image: 
+    url('/img/link.jpg');
+    background-size: cover;
+}
