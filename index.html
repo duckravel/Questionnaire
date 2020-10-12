@@ -9,27 +9,33 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<script>
-    $('.homebg').css('height',$(window).height()-$('#menu').height()-30);
-    $('.homebg').css('width',$(window).width());
-</script>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between" id='menu'>
-        <div class='navbar-brand'>Prototype_v1</div>
+    <nav class="navbar navbar-expand-lg border-bottom" style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+        <div class='h2'>Prototype</div>
     </nav>
-    <div class="homebg">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-sm-8 p-3" style="background-color: #f8f9facc">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos maxime at fugiat ut? Laborum, sunt laboriosam corporis accusantium placeat quia repellat, neque soluta quibusdam natus odio ipsum deleniti. Similique, voluptatibus!</p>
-                <div class="text-center m-3">
-                   <a href="index1.html"><button type="button" class="btn btn-success col-sm-5">Enter the survey</button></a></div>
+    <div id='landing page'>
+        <div class='homebg d-flex'>
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-8 p-5 bg-light col-6">
+                    <p class="mb-5 align-middle">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos maxime at fugiat ut? Laborum, sunt laboriosam corporis accusantium placeat quia repellat, neque soluta quibusdam natus odio ipsum deleniti. Similique, voluptatibus!</p>   
+                    <div class='row justify-content-around'>
+                        <a href="Mapannotation.html" 
+                            class="col-5 p-4 bg-primary d-flex align-items-center justify-content-center text-white">
+                            Annotation Creation</a>
+                        <!--btn btn-success m-1 p-2  -->
+                        <a href="index1.html" 
+                            class=" col-5 p-4 bg-success d-flex align-items-center justify-content-center text-white">
+                            Metadata Creation</a>
+                    </div>
+                </div>
                 
             </div>
+            
         </div>
-        
-    </div>
+    </div>   
+
     
         
 </body>

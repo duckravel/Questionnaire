@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+    <script src="https://kit.fontawesome.com/029682b453.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<style>
+    .form-control-custom{
+        display: inline;
+    }
+    .audio-form{
+        display: flex;
+    }
+</style>
+<body class='modal-open'>
+<div id='app' >
+    <nav class="navbar navbar-expand-lg border-bottom justify-content-between sticky-top" style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+        <div><a href="index.html" 
+            class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
+       </div>
+        <div class='h2'>Metadata Annotation Creation</div>
+        <div><a href="index2.html" 
+             class="btn btn-sm btn-primary rounded-0 ">Next</a>
+        </div>
+        
+    </nav>
+    <!-- toolbar -->
+    <!-- <div id='drawtoolbar' class="d-flex">
+        <div id='rect'   @click.prevent="type='rect'"   :class="{'selected':type=='rect'}" ><a href="#" class="drawicon"><i class="far fa-square" ></i></a></div>
+        <div id='circle' @click.prevent="type='circle'" :class="{'selected':type=='circle'}"><a href="#" class="drawicon"><i class="far fa-circle"></i></a></div>
+        <div id='arrow'  @click.prevent="type='arrow'"  :class="{'selected':type=='arrow'}" ><a href="#" class="drawicon"><i class="fas  fa-arrow-left" style="transform: rotate(-45deg)"></i></a></div>
+        <div id='marker' @click.prevent="type='marker'" :class="{'selected':type=='marker'}"><a href="#" class="drawicon"><i class="fas fa-map-pin"></i></a></div>
+    </div> -->
+    <div class="btn-group-vertical" role="group" aria-label="drawtoolbar" id='drawtoolbar'>
+        <button type="button" class="btn btn-secondary" @click.prevent="type='rect'"   :class="{'selected':type=='rect'}"> <i class="far fa-square" ></i></button>
+        <button type="button" class="btn btn-secondary" @click.prevent="type='circle'" :class="{'selected':type=='circle'}"> <i class="far fa-circle"></i></button>
+        <button type="button" class="btn btn-secondary" @click.prevent="type='arrow'"  :class="{'selected':type=='arrow'}"> <i class="fas  fa-arrow-left"></i></button>
+        <button type="button" class="btn btn-secondary" @click.prevent="type='marker'" :class="{'selected':type=='marker'}"><i class="fas fa-map-pin"></i></button>
+        <!-- :class="{'selected':type=='marker'}" -->
+    </div>
+    
+    <!-- Operation -->
+    <div class='row no-gutters'>
+        <!-- annotate -->
+        <div class="col-md-8 bg-white ">
+            <!-- drawing area -->
+            <div v-for="item in drawlist" :key="item.id">
+                <!-- circle -->
+                <!-- rectangle -->
+    
+                <!-- marker -->
+                <p v-if="item.type=='marker'" :style="item.style">
+                    <i class="fas fa-map-pin" :class="{'text-danger':item.selected}"></i></p>
+                    <!-- <svg class="svgitem" >
+                        <rect v-if="item.type=='rect'"
+                            :x="item.geometry.x"
+                            :y="item.geometry.y"
+                            :width="item.width"
+                            :height="item.height"
+                            :style="item.style"
+                        />
+                    
+                    </svg> -->
+                        
+                <!-- annotate pop up content -->
+                    <template v-if="showmodal">
+                        <!-- pop up -->
+                        <!--  :class="{'modal-backdrop':showmodal}" -->
+                        <div class="modal fade show custom_modal" id="ContentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ContentLabel"> Content Input</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" @click="cancel()">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="patterntype">Select the pattern</label>
+                                    <select class="form-control mb-3" v-model="pattern">
+                                        <option>Correlation</option>
+                                        <option>Frequency</option>
+                                        <option>Trend</option>
+                                        <option>Outlier</option>
+                                        <option>Cluster</option>
+                                        <option>Distribution</option>
+                                      </select>
+                                    <div class="form-group">
+                                        <label for="content">Please type annotation</label>
+                                        <textarea class="form-control" id="content" rows="3" v-model="content" @keyup.enter="save(item)" @keyup.esc="cancel(item)"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cancel(item)">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="save(item)">Save changes</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- mask -->
+                    </template>
+            </div>
+            <!-- annotate pop up mask-->
+            <template v-if="showmodal" >
+                <div class=" modal-backdrop fade show" :key="1"> </div>
+            </template>
+            <!-- image and draw action control -->
+            <div class="p-2" @mousemove="move" @mousedown="start">
+                <img src="./css/mapcollections/current_usdm.png" style="z-index:600;width:100%;" alt="" srcset="">
+            </div>
+        </div>
+        <!-- datalist -->
+        <div class="col-md-4 bg-white border-left overflow-auto" id='data' style="height:400px">
+            <!--data display,remove,edit-->
+            <div class="p-3 bg-info text-white"> Annotation Content</div>
+            <div  v-for="(item,key) in drawlist" class="border-bottom"
+                    @click="item.selected=!item.selected; rmselected(key)" :class="{'bg-light':item.selected}">
+                <div class="row no-gutters">
+                        <div class='col-md-7 p-2 h6'>Annotation {{item.id}}</div>
+                        <div class='col-md-4 ml-auto mt-2'> 
+                            <button class="btn btn-success" @click='modify(item)'><i class="fas fa-edit "></i></button>
+                            <button class="btn btn-danger" @click="rm(item)"><i class="fas fa-minus-circle"></i></button>
+                        </div>
+                </div>
+                <div>
+                    <p class="m-2 badge badge-warning">{{item.pattern}}</p>
+                    <p class="ml-2">{{item.content}}</p>
+                </div>
+            </div>
+            <!--data display,remove,edit-->
+        </div>     
+    </div>
+
+</div>
+</body>
+<script src="./js/script.js"></script>
+</html>

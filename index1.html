@@ -9,18 +9,22 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="js/script.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between" id='menu'>
-        <div class='navbar-brand'>Prototype_v1</div>
-        <div><a href="index2.html">
-            <button type="submit" class="btn btn-primary btn-sm">Next</button>
-        </a>
+    <nav class="navbar navbar-expand-lg border-bottom justify-content-between sticky-top" style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+        <div><a href="index.html" 
+            class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
+       </div>
+        <div class='h2'>Metadata Element Creation</div>
+        <div><a href="index2.html" 
+             class="btn btn-sm btn-primary rounded-0 ">Next</a>
         </div>
         
     </nav>
-        <div class='row'>
-            <div class="col-md-4 bg-white" id='data'>
+
+        <div class='row w-100'>
+            <div class="col-md-4 bg-white mt-2 border-right" id='data'>
                 <form action="" class="p-2">
                     <div class="form-group">
                         <label for="">Place</label>
@@ -47,13 +51,12 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-8 bg-white">
-                <div class="p-2" >
-                    <iframe id='map1' src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c
-                    " frameborder="0"></iframe>
-                </div>
+            <div class="col-md-8 no-gutters p-0">
+                    <iframe class="w-100 h-100" src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c"
+                    frameborder="0"
+                    ></iframe>
             </div>
         </div>
 </body>
-<script src="/js/script.js"></script>
+
 </html>

@@ -19,13 +19,21 @@
     }
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between" id='menu'>
-        <div class='navbar-brand'>Prototype_v1</div>
-        <div><button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    <nav class="navbar navbar-expand-lg border-bottom justify-content-between " style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+        <div><a href="index1.html" 
+            class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
+       </div>
+        <div class='h2'>Prototype_v1</div>
+        <div><a href="index2.html" 
+             class="btn btn-sm btn-primary rounded-0 ">Submit</a>
         </div>
+        
     </nav>
-        <div class='row'>
-            <div class="col-md-4 bg-white" id='data'>
+
+
+
+        <div class='row w-100'>
+            <div class="col-md-4 bg-white mt-2 border-right" id='data'>
                 <form action="" class="p-2">
                     <div class="form-group">
                         <label for="Name" class="">Place</label>
@@ -72,13 +80,12 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-8 bg-white">
-                <div class="p-2" >
-                    <iframe id='map1' src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c
-                    " frameborder="0"></iframe>
-                </div>
+            <div class="col-md-8 no-gutters p-0">
+                <iframe class="w-100 h-100" src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c"
+                frameborder="0"
+                ></iframe>
             </div>
         </div>
 </body>
-<script src="/js/script.js"></script>
+<script src="js/script.js"></script>
 </html>

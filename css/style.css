@@ -1,7 +1,45 @@
 .homebg{
     height: 95vh;
     width: 100vw;
-    background-image: 
-    url('/img/link.jpg');
-    background-size: cover;
+}
+.landpage{
+    min-height: calc(100vh-(100vh - 40px -24px - 1.5rem));
+}
+.drawicon{
+    color:white; 
+}
+.drawicon:hover{
+    color:white;
+}
+#drawtoolbar{
+    position:fixed; 
+    top:70px; 
+    left:0.25rem;
+    z-index: 900;
+}
+
+.svgitem{
+    position: absolute;
+    z-index:800;
+    height: 90vh;
+    width: 70vw;
+}
+.custom_modal{
+display: block; 
+padding-right: 18px;
+}
+
+.custom_container{
+position: relative;
+overflow: hidden;
+/* width: 100%; */
+}
+.responsive-iframe{
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+width: 100%;
+height: 100%;
 }
