@@ -1,7 +1,18 @@
 //已知bug : pin的xy 不太正確
 // 編輯時,若點選modal中的close會山資料
 // 畫正方形、圓形的操作還是不太正常,有點怪怪的XD
+$( document ).ready(function(){
+    const setsoundheight=()=>{
+        let h= $('body').height()-$('#menu').height();
+        $('#soundheight').height(h);   
+    };
+    setsoundheight();
+    $( window ).resize(function(){
+        setsoundheight();
+    });
 
+}
+);
 var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
 recognition.lang = 'en-US';
 function speechstart(){
@@ -20,6 +31,37 @@ function speechend(){
         console.log('Start end');
 }}
 
+///////////////////////
+///JsonLD Schema///////
+///////////////////////
+const schema = (item,type) =>{
+    var ele;
+    if (type=='annotation'){
+        ele = `{
+            "@context": "http://schema.org",
+            '@type': 'Map',
+            'name': ${item.title},
+            '@pattern':${item.pattern},
+            '@caption':${item.content},
+        }`;
+    }
+    else if (type=='metaElement'){
+        ele = `{
+            "@context": "http://schema.org",
+            '@type': 'Map',
+            'name': ${item.title},
+            '@spatialCoverage':${item.placename},
+            '@alternateName':${item.altername},
+            '@genre':${category},
+            '@description':${item.Description},
+            '@TemporalReference':${item.starttime}/${item.endtime},
+        }`;
+    }
+    let JLD = document.createElement('script');
+    JLD.type='application/ld+json',
+    JLD.innerHTML=ele;
+    return JLD
+}
 var app = new Vue({
     el:'#app',
     data:{
