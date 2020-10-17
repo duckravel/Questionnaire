@@ -23,41 +23,59 @@
         
     </nav>
 
-        <div class='row w-100'>
-            <div class="col-md-4 bg-white mt-2 border-right" id='data'>
-                <form action="" class="p-2">
-                    <div class="form-group">
-                        <label for="">Place</label>
-                        <input type="text" class="form-control" id='Name' autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Altername for place</label>
-                        <input type="text" class="form-control" id='AlternateName' autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Category</label>
-                        <input type="text" class="form-control" id='genre' autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Description</label>
-                        <input type="text" class="form-control" id='abstract' autocomplete="off">
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-lg-6 ">
-                            <label for="" >Start time</label>
-                            <input type="date" class="form-control" id='time-s'></input>
+        <div class='row w-100' id='data'>
+            <!-- <div v-for='(item,index) in list' > -->
+                
+                <div class="col-md-4 bg-white mt-2 border-right">
+                    <nav class="p-2" >
+                        <ul class="pagination">
+                          <li class="page-item"><a class="page-link" href="#">index</a></li>
+                          <li class="page-item"><a class="page-link" href="#">2</a></li>
+                          <li class="page-item"><a class="page-link" href="#">3</a></li>
+                          <li class="page-item"><a class="page-link" href="#">4</a></li>
+                          <li class="page-item"><a class="page-link" href="#">5</a></li>
+                          <li class="page-item"><a class="page-link" href="#">6</a></li>
+                          <li class="page-item"><a class="page-link" href="#">7</a></li>
+                          <li class="page-item"><a class="page-link" href="#">8</a></li>
+                          <li class="page-item"><a class="page-link" href="#">9</a></li>
+                          <li class="page-item"><a class="page-link" href="#">10</a></li>
+                        </ul>
+                      </nav>
+                    <form action="" class="p-2">
+                        <div class="form-group">
+                            <label for="">Place</label>
+                            <input type="text" class="form-control" id='Name' autocomplete="off">
                         </div>
-                        <div class="col-lg-6 ">
-                        <label for="" >End time</label>
-                        <input type="date" class="form-control" id='time-e'></input>
+                        <div class="form-group">
+                            <label for="">Altername for place</label>
+                            <input type="text" class="form-control" id='AlternateName' autocomplete="off">
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-8 no-gutters p-0">
-                    <iframe class="w-100 h-100" src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c"
-                    frameborder="0"
-                    ></iframe>
+                        <div class="form-group">
+                            <label for="">Category</label>
+                            <input type="text" class="form-control" id='genre' autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Description</label>
+                            <input type="text" class="form-control" id='abstract' autocomplete="off">
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-lg-6 ">
+                                <label for="" >Start time</label>
+                                <input type="date" class="form-control" id='time-s'></input>
+                            </div>
+                            <div class="col-lg-6 ">
+                            <label for="" >End time</label>
+                            <input type="date" class="form-control" id='time-e'></input>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-8 no-gutters p-0">
+                        <iframe class="w-100 h-100" src="https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c"
+                        frameborder="0"
+                        ></iframe>
+                        <!-- https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c -->
+                <!-- </div> -->
             </div>
         </div>
 </body>
