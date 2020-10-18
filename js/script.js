@@ -1,20 +1,14 @@
 //已知bug : pin的xy 不太正確
-// 畫正方形、圓形的操作還是不太正常,有點怪怪的XD 目前無法重現,下次請清楚描述bug
 $( document ).ready(function(){
     const setsoundheight=()=>{
         let h= $('body').height()-$('#menu').height();
         $('#soundheight').height(h);   
     };
-    const setdataheight=()=>{
-        let h= $('body').height()-$('#menu').height();
-        $('#data').height(h);  
-    }
     setsoundheight();
-    setdataheight();
-    $( window ).resize(function(){
-        setsoundheight();
-        setdataheight();
-    });
+    // $( window ).resize(function(){
+    //     setsoundheight();
+    //     setdataheight();
+    // });
 
     var app = new Vue({
         el:'#app',
@@ -33,13 +27,7 @@ $( document ).ready(function(){
             fill: '#821717',
             strokeWidth: 5,
             rotate:0,
-            //data for element creation
-            place:'',
-            Altername:'',
-            Category:'',
-            Description:'',
-            StartTime:'',
-            EndTime:'',
+            //pagedata for element creation
             currentpage:0,
             inputs:'',
             inpute:'',
@@ -50,11 +38,199 @@ $( document ).ready(function(){
             Desc_time:0,
             Stime:0,
             Etime:0,
-            metadataelement:[],
             sourcedata:[
-                'http://vis.ecowest.org/interactive/wildfires.php',
-                'https://landsat.visibleearth.nasa.gov/view.php?id=91771'
-            ],
+                {materialLink:'http://vis.ecowest.org/interactive/wildfires.php',
+                type:'typing',
+                page_id:1,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:2,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:3,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:4,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:5,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:6,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:7,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:8,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:9,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
+                type:'typing',
+                page_id:10,
+                place:'',
+                place_time:0,
+                place_acc:0.35,
+                Altername:'',
+                alter_time:0,
+                alter_acc:0.35,
+                Category:'',
+                Cate_time:0,
+                Cate_acc:0.80,
+                Description:'',
+                Desc_time:0,
+                Desc_acc:0.80,
+                Start_time:'',
+                Stime:0,
+                End_time:'',
+                Etime:0},
+                
+            ],              
             pages:10,
             //variable for sound recognition
             totext:'',
@@ -139,6 +315,7 @@ $( document ).ready(function(){
             },
             drawRect(event){
                 vm=this;
+                //if leftclick and status is drawing
                 if (event.buttons == 1 && vm.isdraw){
                     let lastRect = this.drawlist[vm.drawlist.length-1];        
                     lastRect.height = Math.abs(event.clientY -55 - lastRect.geometry.y);
@@ -152,6 +329,7 @@ $( document ).ready(function(){
             },
             drawCircle(event){
                 vm=this;
+                //if leftclick and status is drawing
                 if (event.buttons == 1 && vm.isdraw){
                     let lastCircle = this.drawlist[vm.drawlist.length-1];        
                     let a = Math.abs(event.clientY -55 - lastCircle.geometry.y);
@@ -246,50 +424,24 @@ $( document ).ready(function(){
                 }
                 
             },
-            checkelement(){
-                vm=this;
-                list = [vm.place,vm.Altername,vm.Category,vm.StartTime,vm.EndTime,vm.Description];
+            checkelement(place,Altername,Category,StartTime,EndTime,Description){
+                list = [place,Altername,Category,StartTime,EndTime,Description];
+                
                 return list.every(ele=>ele.length>0);
             },
             storeelement(page){
                 vm=this;
-                vm.metadataelement.push(
-                {
-                'materialLink':vm.sourcedata[page-1],
-                'type':'typing',
-                'page_id':page-1,
-                'place':vm.place,
-                'place_time':vm.place_time,
-                'place_acc':0.35,
-                'Altername':vm.Altername,
-                'alter_time':25,
-                'alter_acc':0.35,
-                'Category':vm.Category,
-                'Cate_time':40,
-                'Cate_acc':0.80,
-                'Description':vm.Description,
-                'Desc_time':30,
-                'Desc_acc':0.80,
-                'Start_time':vm.StartTime,
-                'Stime':25,
-                'End_time':vm.EndTime,
-                'Etime':25});
-                vm.place_time=0;
-                vm.alter_time=0;
-                vm.Cate_time=0;
-                vm.Cate_acc=0;
-                vm.Desc_time=0;
-                vm.Stime=0;
-                vm.Etime=0;
-                vm.place=0;
-                vm.Altername=0;
-                vm.Category=0;
-                vm.Description=0;
-                vm.StartTime=0;
-                vm.EndTime=0;
+                //clear the time variables for the next calculation
+                vm.sourcedata[page].place_time+=vm.place_time;
+                vm.sourcedata[page].alter_time+=vm.alter_time;
+                vm.sourcedata[page].Cate_time+=vm.Cate_time;
+                vm.sourcedata[page].Desc_time+=vm.Desc_time;
+                vm.sourcedata[page].Stime+=vm.Stime;
+                vm.sourcedata[page].Etime+=vm.Etime;
+                //clear the time variables for the next calculation
+                vm.place_time=0;vm.alter_time=0;vm.Cate_time=0;vm.Desc_time=0;vm.Stime=0;vm.Etime=0;
             },
             time_in(event){
-                
                 this.inputs=new Date();
             },
             time_out(event){
@@ -299,26 +451,56 @@ $( document ).ready(function(){
             },
             time_esteimator(t1,t2,event){
                 vm=this;
-                // console.log(t1,t2,event);
-
+                time=0;
+                
+                second = t2.getSeconds()-t1.getSeconds();
+                min= t2.getMinutes()-t1.getMinutes();
+                hour = t2.getHours()-t1.getHours();
+                day = t2.getDay()-t1.getDay();
+                time = (day*24*60*60)+(hour*60*60)+(min*60)+second;
+                console.log(t2,t1,time,event);
                 switch(event){
                     case 'place':{
-                        vm.place_time+=1;
+                        vm.place_time+=time;
+                        break;
                     }
-                    
+                    case 'Altername':{
+                        vm.alter_time+=time;
+                        break;
+                    }
+                    case 'Category':{
+                        vm.Cate_time+=time;
+                        break;
+                    }
+                    case 'Description':{
+                        vm.Desc_time+=time;
+                        break;
+                    }
+                    case 'StartTime':{
+                        vm.Stime+=time;
+                        break;
+                    }
+                    case 'EndTime':{
+                        vm.Etime+=time;
+                        break;
+                    }
                 }
-
             },
-            pageChange(page){
+            pageChange(dir){
                 //pageChange contains three seperate works: check data, store data, and change
                 vm=this;
-                check = vm.checkelement();
-                if (check==false){
-                    alert('invalid field');
-                    return
-                }
-                vm.storeelement(page);
-                vm.currentpage = (page - 1);
+                element=vm.sourcedata[vm.currentpage];
+                if (dir=='next'){
+                    check = vm.checkelement(element.place,element.Altername,element.Category,element.StartTime,element.EndTime,element.Description);
+                    if (check==false){
+                        alert('Please fill the empty field');
+                        return
+                    };
+                    vm.storeelement(vm.currentpage);
+                    ++vm.currentpage;}
+                else {vm.storeelement(vm.currentpage);
+                     --vm.currentpage;
+                      }
                 
             },
 
