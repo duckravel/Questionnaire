@@ -5,39 +5,77 @@ $( document ).ready(function(){
         $('#soundheight').height(h);   
     };
     setsoundheight();
-    // $( window ).resize(function(){
-    //     setsoundheight();
-    //     setdataheight();
-    // });
-
+    //component for type element
+    var typeelement = {
+        props:['element'],
+        template:'#typeElement',
+        data:function(){
+            return {inputs:'',inpute:'',place_time:0,alter_time:0,Cate_time:0,Cate_acc:0,Desc_time:0,Stime:0,Etime:0,pages:10,currentpage:0}
+        },
+        methods:{
+            time_in(event){
+                this.inputs=new Date();
+            },
+            time_out(event){            
+                this.inpute=new Date();
+                timeresult=this.time_esteimator(this.inputs,this.inpute,event);
+                this.$emit('timelistener',timeresult);
+            },
+            time_esteimator(t1,t2,event){
+                vm=this;
+                time=0;            
+                second = t2.getSeconds()-t1.getSeconds();
+                min= t2.getMinutes()-t1.getMinutes();
+                hour = t2.getHours()-t1.getHours();
+                day = t2.getDay()-t1.getDay();
+                time = (day*24*60*60)+(hour*60*60)+(min*60)+second;
+                switch(event){
+                    case 'place':{
+                        vm.place_time+=time;
+                        return [vm.place_time,event]
+                        break;
+                    }
+                    case 'Altername':{
+                        vm.alter_time+=time;
+                        return [vm.alter_time,event]
+                        break;
+                    }
+                    case 'Category':{
+                        vm.Cate_time+=time;
+                        return [vm.Cate_time,event]
+                        break;
+                    }
+                    case 'Description':{
+                        vm.Desc_time+=time;
+                        return [vm.Desc_time,event]
+                        break;
+                    }
+                    case 'StartTime':{
+                        vm.Stime+=time;
+                        return [ vm.Stime,event]
+                        break;
+                    }
+                    case 'EndTime':{
+                        vm.Etime+=time;
+                        return [ vm.Etime,event]
+                        break;
+                    }
+                }
+            },
+            link(element){return `${element.materialLink}`}
+        },
+        computed:{
+            
+        }
+    };
     var app = new Vue({
         el:'#app',
         data:{
-            //data for annotation
             type:'',
-            drawlist:[],
-            showmodal:false,
-            content:'',
-            pattern:'',
-            isdraw:false,
-            isItemSelected:false,
-            isCancel:false,
-            selecteditem:null,
-            stroke: '#ff0000',
-            fill: '#821717',
-            strokeWidth: 5,
-            rotate:0,
+            //data for annotation
+            drawlist:[],showmodal:false,content:'',pattern:'',isdraw:false,isItemSelected:false,isCancel:false,selecteditem:null,stroke: '#ff0000',fill: '#821717',strokeWidth: 5,rotate:0,
             //pagedata for element creation
-            currentpage:0,
-            inputs:'',
-            inpute:'',
-            place_time:0,
-            alter_time:0,
-            Cate_time:0,
-            Cate_acc:0,
-            Desc_time:0,
-            Stime:0,
-            Etime:0,
+            currentpage:0,pages:10,inputs:'',inpute:'',place_time:0,alter_time:0,Cate_time:0,Cate_acc:0,Desc_time:0,Stime:0,Etime:0,
             sourcedata:[
                 {materialLink:'http://vis.ecowest.org/interactive/wildfires.php',
                 type:'typing',
@@ -230,14 +268,9 @@ $( document ).ready(function(){
                 End_time:'',
                 Etime:0},
                 
-            ],              
-            pages:10,
+            ],
             //variable for sound recognition
-            totext:'',
-            speechcontent:'',
-            speechresult:'',
-            isRecord:false,
-            recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
+            totext:'',speechcontent:'',speechresult:'',isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
             },
         methods:{
             //drawing part
@@ -423,11 +456,38 @@ $( document ).ready(function(){
                     vm.speechcontent='';
                 }
                 
-            },
-            checkelement(place,Altername,Category,StartTime,EndTime,Description){
-                list = [place,Altername,Category,StartTime,EndTime,Description];
-                
-                return list.every(ele=>ele.length>0);
+            },            
+            timeresult(result){
+                vm=this;
+                console.log(result);
+                time=result[0]; field =result[1];
+                switch(field){
+                    case 'place':{
+                        vm.place_time=time;
+                        break;
+                    }
+                    case 'Altername':{
+                        vm.alter_time=time;
+                        break;
+                    }
+                    case 'Category':{
+                        vm.Cate_time=time;
+                        break;
+                    }
+                    case 'Description':{
+                        vm.Desc_time=time;
+                        break;
+                    }
+                    case 'StartTime':{
+                        vm.Stime=time;
+                        break;
+                    }
+                    case 'EndTime':{
+                        vm.Etime=time;
+                        break;
+                    }
+                }
+
             },
             storeelement(page){
                 vm=this;
@@ -440,52 +500,12 @@ $( document ).ready(function(){
                 vm.sourcedata[page].Etime+=vm.Etime;
                 //clear the time variables for the next calculation
                 vm.place_time=0;vm.alter_time=0;vm.Cate_time=0;vm.Desc_time=0;vm.Stime=0;vm.Etime=0;
-            },
-            time_in(event){
-                this.inputs=new Date();
-            },
-            time_out(event){
-                
-                this.inpute=new Date();
-                this.time_esteimator(this.inputs,this.inpute,event);
-            },
-            time_esteimator(t1,t2,event){
-                vm=this;
-                time=0;
-                
-                second = t2.getSeconds()-t1.getSeconds();
-                min= t2.getMinutes()-t1.getMinutes();
-                hour = t2.getHours()-t1.getHours();
-                day = t2.getDay()-t1.getDay();
-                time = (day*24*60*60)+(hour*60*60)+(min*60)+second;
-                console.log(t2,t1,time,event);
-                switch(event){
-                    case 'place':{
-                        vm.place_time+=time;
-                        break;
-                    }
-                    case 'Altername':{
-                        vm.alter_time+=time;
-                        break;
-                    }
-                    case 'Category':{
-                        vm.Cate_time+=time;
-                        break;
-                    }
-                    case 'Description':{
-                        vm.Desc_time+=time;
-                        break;
-                    }
-                    case 'StartTime':{
-                        vm.Stime+=time;
-                        break;
-                    }
-                    case 'EndTime':{
-                        vm.Etime+=time;
-                        break;
-                    }
-                }
-            },
+                },
+            checkelement(place,Altername,Category,StartTime,EndTime,Description){
+                list = [place,Altername,Category,StartTime,EndTime,Description];  
+                console.log(list);
+                return list.every(ele=>ele.length>0);
+            }, 
             pageChange(dir){
                 //pageChange contains three seperate works: check data, store data, and change
                 vm=this;
@@ -501,11 +521,12 @@ $( document ).ready(function(){
                 else {vm.storeelement(vm.currentpage);
                      --vm.currentpage;
                       }
-                
             },
-
-            
-        }
+        },
+        components:{
+            'type-element':typeelement,
+            'row-page':pageControl,
+        },
     });
 }
 );

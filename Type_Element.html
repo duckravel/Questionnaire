@@ -14,74 +14,93 @@
 </head>
 <body>
     <div id='app'>
-    <nav class="navbar navbar-expand-lg border-bottom justify-content-between " style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
-        <div><a href="index.html" 
-            class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
-       </div>
-        <div class='h2'>Metadata Element Creation</div>
-        <div><a href="index2.html" 
-             class="btn btn-sm btn-primary rounded-0 ">Submit</a>
+        <nav class="navbar navbar-expand-lg border-bottom justify-content-between " style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+            <div><a href="index.html" 
+                class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
         </div>
-        
-    </nav>
-    <nav class="p-2 d-flex justify-content-end" id='element'>
-        <ul class="pagination" >                                 
-            <li class="page-item">
-                <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
-            </li>
-            <li class="page-item" v-for="page in pages" :class='{active:currentpage===page-1}'>
-                <a class="page-link" href="#">{{page}}</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
-            </li>
+            <div class='h2'>Metadata Element Creation</div>
+            <div><a href="index2.html" 
+                class="btn btn-sm btn-primary rounded-0 ">Submit</a>
+            </div>
+            
+        </nav>
+        <nav class="p-2 d-flex justify-content-end" id='element'>
+            <ul class="pagination" >                                 
+                <li class="page-item">
+                    <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
+                </li>
+                <li class="page-item" v-for="page in pages" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
+                    <a class="page-link" href="#">{{page}}</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
+                </li>
 
-        </ul>
-    </nav>
-        <div class='row w-100' id='data' v-for='(item,index) in sourcedata' v-if ='index==currentpage'>
+            </ul>
+        </nav>
+        <type-element v-for='(item,index) in sourcedata' :element="item" :key='index'v-if ='index==currentpage'
+        v-on:timelistener='timeresult'
+        ></type-element>  
+    </div>
+    <script type='type/x-template' id='pageControl'>
+        <nav class="p-2 d-flex justify-content-end" id='element'>
+            <ul class="pagination" >                                 
+                <li class="page-item">
+                    <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
+                </li>
+                <li class="page-item" v-for="page in pages" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
+                    <a class="page-link" href="#">{{page}}</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
+                </li>
+
+            </ul>
+        </nav>
+    </script>
+    <script type='type/x-template' id='typeElement'>
+        <div class='row w-100'> 
             <div class="col-md-4 bg-white mt-2 border-right">
                 <form action="" class="p-2">
                     <div class="form-group">
                         <label for="">Place</label>
-                        <input v-model='item.place'  type="text" class="form-control" id='Place' autocomplete="off" @focus="time_in('place')" @blur="time_out('place')" required>
+                        <input v-model='element.place'  type="text" class="form-control" id='Place' autocomplete="off" @focus="time_in('place')" @blur="time_out('place')" required>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="">Altername for place</label>
-                        <input v-model='item.Altername' type="text" class="form-control" id='Altername' autocomplete="off" @focus="time_in('Altername')" @blur="time_out('Altername')">
+                        <input v-model='element.Altername' type="text" class="form-control" id='Altername' autocomplete="off" @focus="time_in('Altername')" @blur="time_out('Altername')">
                     </div>
                     <div class="form-group">
                         <label for="">Category</label>
-                        <input v-model='item.Category' type="text" class="form-control" id='Category' autocomplete="off" @focus="time_in('Category')" @blur="time_out('Category')">
+                        <input v-model='element.Category' type="text" class="form-control" id='Category' autocomplete="off" @focus="time_in('Category')" @blur="time_out('Category')">
                     </div>
                     <div class="form-group">
                         <label for="">Description</label>
-                        <input v-model='item.Description' type="text" class="form-control" id='Description' autocomplete="off" @focus="time_in('Description')" @blur="time_out('Description')">
+                        <input v-model='element.Description' type="text" class="form-control" id='Description' autocomplete="off" @focus="time_in('Description')" @blur="time_out('Description')">
                     </div>
                     <div class="row form-group">
                         <div class="col-lg-6 ">
                             <label for="" >Start time</label>
-                            <input v-model='item.StartTime' type="date" class="form-control" id='StartTime' @focus="time_in('StartTime')" @blur="time_out('StartTime')"></input>
+                            <input v-model='element.StartTime' type="date" class="form-control" id='StartTime' @focus="time_in('StartTime')" @blur="time_out('StartTime')"></input>
                         </div>
                         <div class="col-lg-6 ">
                         <label for="" >End time</label>
-                        <input v-model='item.EndTime' type="date" class="form-control" id='EndTime' @focus="time_in('EndTime')" @blur="time_out('EndTime')"></input>
+                        <input v-model='element.EndTime' type="date" class="form-control" id='EndTime' @focus="time_in('EndTime')" @blur="time_out('EndTime')"></input>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="col-md-8 no-gutters p-0">
-                <iframe class="w-100 h-100" :src="item.materialLink"
+                <iframe class="w-100 h-100" :src="link(element)"
                 frameborder="0"
                 ></iframe>
-                    <!-- https://nation.maps.arcgis.com/apps/Cascade/index.html?appid=a9d345446d1a48a2918ff95b51f5841c -->
-            <!-- </div> -->
-        </div>
-            
         </div>
     </div>
+            
+    </script>
 </body>
 
 </html>
