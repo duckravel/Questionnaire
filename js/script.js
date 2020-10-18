@@ -525,7 +525,6 @@ $( document ).ready(function(){
         },
         components:{
             'type-element':typeelement,
-            'row-page':pageControl,
         },
     });
 }

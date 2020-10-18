@@ -10,7 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/style.css">
     <script src="js/script.js"></script>
+
 </head>
 <body>
     <div id='app'>
@@ -24,13 +26,13 @@
             </div>
             
         </nav>
-        <nav class="p-2 d-flex justify-content-end" id='element'>
+        <nav class="p-2 d-flex justify-content-end">
             <ul class="pagination" >                                 
                 <li class="page-item">
                     <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
                 </li>
                 <li class="page-item" v-for="page in pages" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
-                    <a class="page-link" href="#">{{page}}</a>
+                    <p class="custom-link" href="#">{{page}}</p>
                 </li>
                 <li class="page-item">
                     <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
@@ -42,22 +44,6 @@
         v-on:timelistener='timeresult'
         ></type-element>  
     </div>
-    <script type='type/x-template' id='pageControl'>
-        <nav class="p-2 d-flex justify-content-end" id='element'>
-            <ul class="pagination" >                                 
-                <li class="page-item">
-                    <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
-                </li>
-                <li class="page-item" v-for="page in pages" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
-                    <a class="page-link" href="#">{{page}}</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
-                </li>
-
-            </ul>
-        </nav>
-    </script>
     <script type='type/x-template' id='typeElement'>
         <div class='row w-100'> 
             <div class="col-md-4 bg-white mt-2 border-right">

@@ -2,9 +2,23 @@
     height: 95vh;
     width: 100vw;
 }
-/* .card:hover{
-    background-color: rgba(0, 123, 255,.075);
-} */
+.custom-link{
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+.page-item.active .custom-link
+{
+    z-index: 1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
 .landpage{
     min-height: calc(100vh-(100vh - 40px -24px - 1.5rem));
 }
