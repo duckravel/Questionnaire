@@ -1,12 +1,141 @@
 //已知bug : pin的xy 不太正確
+//無法阻止同時錄製的動作QAQ 崩潰
+//圖片大小不太OK
+//時間未錄製
+//存檔案
+//指導說明頁
+
+let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+let recognition = SpeechRecognition? new SpeechRecognition() : false
+recognition.lang = 'en-US';
+recognition.continuous=true;
+recognition.interimResults=true;
+
 $( document ).ready(function(){
-    const setsoundheight=()=>{
-        let h= $('body').height()-$('#menu').height();
-        $('#soundheight').height(h);   
+    //get highet for annotation xy setting
+    let h= $('body').height()-$('#menu').height();
+    $('#soundheight').height(h);   
+  
+    var annoComponent = {
+        inherit: true,
+        props:['page','data','drawingtype','tempisempty'],
+        template:'#annoComponent',
+        data:function(){return {
+            templist:[{type:'pin',geometry:{x: 0, y:0},style:{fontsize:`1px`,fill:`transparent`}}],
+            isdraw:false,stroke: '#ff0000',fill: '#821717',strokeWidth: 5,rotate:0
+        }},
+        methods:{
+            start(event){
+                // this.templist=[];
+                vm=this;
+                vm.isdraw=false;
+                switch(this.drawingtype)
+                {   
+                    case 'circle': vm.startCircle(event); break;
+                    case 'rect': vm.startRect(event); break;
+                    case 'pin': vm.pin(event); break;
+                    case 'pencil': vm.startpencil(event); break;
+                }
+            },
+            move(event){
+                vm=this;
+                switch(this.drawingtype)
+                {   
+                    case 'circle': vm.drawCircle(event); break;
+                    case 'rect': vm.drawRect(event); break;
+                    case 'pencil':vm.drawpencil(event);break;
+                }
+            },
+            pin(event){
+                vm=this;
+                vm.templist.push({
+                            id:Date.now(),
+                            type:'pin',geometry:{x: event.clientX, y: event.clientY-40},
+                            style:{fill:`${vm.fill}`},selected:false});
+                 result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                 this.$emit('openmodal',result);
+            },
+            startRect(event){
+                vm=this;           
+                vm.templist.push({
+                    id:Date.now(),
+                    type: 'rect',selected:false,
+                    geometry:{x: event.clientX, y: event.clientY-40},width: 0, height: 0,radius: 0,rotate: 0,
+                    style:`fill:${vm.fill};stroke:${vm.stroke};strokewidth:${vm.strokeWidth};opacity:0.7`,
+                });
+                vm.isdraw=true;
+            },
+            startCircle(event){
+                vm=this;           
+                vm.templist.push({
+                    id:Date.now(),
+                    type:'circle',
+                    geometry:{x: event.clientX, y: event.clientY-40},radius: 0,selected:false,
+                    style:`fill:${vm.fill};stroke:${vm.stroke};strokewidth:${vm.strokeWidth};opacity:0.7`,
+                });
+                vm.isdraw=true;
+            },
+            startpencil(event){
+                vm=this;
+                vm.templist.push(
+                   {    id:Date.now(), 
+                        type: 'pencil',
+                        points: `${event.clientX},${event.clientY-40} `,
+                        style: `stroke-width:${vm.strokeWidth};stroke:${vm.stroke};fill:none`,
+                        selected:false,
+                    });
+                vm.isdraw=true;
+            },
+            drawRect(event){
+                vm=this;
+                //if leftclick and status is drawing
+                if (event.buttons == 1 && vm.isdraw){
+                    let lastRect=vm.templist[vm.templist.length-1]
+                    lastRect.height = Math.abs(event.clientY -40- lastRect.geometry.y);
+                    lastRect.width  = Math.abs(event.clientX - lastRect.geometry.x);
+                }
+                else if (event.button == 0 && vm.isdraw){
+                    vm.isdraw=false;
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    this.$emit('openmodal',result);
+                }
+            },
+            drawCircle(event){
+                vm=this;
+                //if leftclick and status is drawing
+                if (event.buttons == 1 && vm.isdraw){
+                    let lastCircle = vm.templist[vm.templist.length-1];        
+                    let a = Math.abs(event.clientY -40- lastCircle.geometry.y);
+                    let b = Math.abs(event.clientX - lastCircle.geometry.x);
+                    lastCircle.radius = Math.sqrt((a * a) + (b * b));
+                }
+                else if (event.button == 0 && vm.isdraw){
+                    vm.isdraw=false;
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    this.$emit('openmodal',result);
+                }
+            },
+            drawpencil(event){
+                vm=this;
+                if(event.buttons == 1 && vm.isdraw){
+                    let lastLine = vm.templist[vm.templist.length-1];
+                    lastLine.points += `${event.clientX},${event.clientY-40} `;
+                }
+                else if (event.buttons == 0 && vm.isdraw){
+                    vm.isdraw=false;
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    this.$emit('openmodal',result);
+                }
+            },
+        },
+        watch:{
+            tempisempty:function(){
+                if (this.tempisempty==''){this.templist=[{type:'pin',geometry:{x: 0, y:0},style:{fontsize:`1px`,fill:`transparent`}}]};
+            }
+        }
     };
-    setsoundheight();
     //component for type element
-    var typeelement = {
+    var typeelement = Vue.extend({
         props:['element'],
         template:'#typeElement',
         data:function(){
@@ -30,464 +159,113 @@ $( document ).ready(function(){
                 day = t2.getDay()-t1.getDay();
                 time = (day*24*60*60)+(hour*60*60)+(min*60)+second;
                 switch(event){
-                    case 'place':{
-                        vm.place_time+=time;
-                        return [vm.place_time,event]
-                        break;
-                    }
-                    case 'Altername':{
-                        vm.alter_time+=time;
-                        return [vm.alter_time,event]
-                        break;
-                    }
-                    case 'Category':{
-                        vm.Cate_time+=time;
-                        return [vm.Cate_time,event]
-                        break;
-                    }
-                    case 'Description':{
-                        vm.Desc_time+=time;
-                        return [vm.Desc_time,event]
-                        break;
-                    }
-                    case 'StartTime':{
-                        vm.Stime+=time;
-                        return [ vm.Stime,event]
-                        break;
-                    }
-                    case 'EndTime':{
-                        vm.Etime+=time;
-                        return [ vm.Etime,event]
-                        break;
-                    }
+                    case 'place':{ vm.place_time+=time; return [vm.place_time,event]}
+                    case 'Altername':{ vm.alter_time+=time; return [vm.alter_time,event];}
+                    case 'Category':{ vm.Cate_time+=time;return [vm.Cate_time,event]}
+                    case 'Description':{vm.Desc_time+=time;return [vm.Desc_time,event]}
+                    case 'StartTime':{vm.Stime+=time;return [ vm.Stime,event]}
+                    case 'EndTime':{vm.Etime+=time;return [ vm.Etime,event]}
                 }
             },
             link(element){return `${element.materialLink}`}
-        },
-        computed:{
-            
         }
+    });
+    var soundElement ={
+        props:['element','itemid'],
+        template:'#soundElement',
+        extends:typeelement,
+        data() {
+            return {
+                totext:'',speechresult:[],isRecord:false,
+                place:true,Altername:true,Category:true,Description:true,EndTime:true,StartTime:true
+            }
+        },
+        methods: {
+            prevent(){
+                list=[this.place,this.Altername,this.Category,this.Description,this.StartTime,this.EndTime]
+                newlist = list.filter(ele=> {ele==false});
+                if (newlist.length>=2){return true}
+                else{return false}
+            },
+            record(ele,id){
+                const vm=this;
+                // if (vm.prevent()){
+                //     alert('Recording different elements at the same time is not allowed');
+                //     vm.endrecord();
+                //     return};
+                recognition.start();
+                recognition.addEventListener('result', event => {
+                    const text = Array.from(event.results).map(result => result[0]).map(result => result.transcript).join('')
+                    this.totext = `${text}.`;
+                    this.speechresult.push(this.totext);
+                  });
+              
+        },
+            endrecord(ele,id){
+                vm=this;
+                // if (vm.prevent()){
+                //     alert('Recording different elements at the same time is not allowed');
+                //     vm.endrecord();
+                //     return};
+                recognition.stop();
+                if (this.speechresult[this.speechresult.length-1]==undefined){
+                    alert("Did not detect your voice, please record again");
+                    return
+                }
+                result = [id,ele, this.speechresult[this.speechresult.length-1]]
+                this.$emit('catchdata',result);
+                this.speechresult=[];
+                this.totext='';
+            }
+        },
+    };
+    var rowDisplay={
+        props:['arc'],
+        template:'#rowDisplay'
+    };
+    var rowData={
+        props:['dataitem','datakey'],
+        template:'#rowData',
+        methods: {
+            rm(item){
+                this.$emit('delete',item);
+            },
+            modify(item,key){
+                result={open:true,isNew:false,index:key,content:item.content,pattern:item.pattern};
+                this.$emit('openmodal',result);
+            },
+            select(isselect,item){
+                result={selected:isselect,data:item};
+                this.$emit('isselect',result);
+            },
+        },
     };
     var app = new Vue({
         el:'#app',
         data:{
             type:'',
-            //data for annotation
-            drawlist:[],showmodal:false,content:'',pattern:'',isdraw:false,isItemSelected:false,isCancel:false,selecteditem:null,stroke: '#ff0000',fill: '#821717',strokeWidth: 5,rotate:0,
+            //data for all
+            casedata:[],annotationdata:[],isSubmit:false,
+            //data for annotation;
+            templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
             //pagedata for element creation
             currentpage:0,pages:10,inputs:'',inpute:'',place_time:0,alter_time:0,Cate_time:0,Cate_acc:0,Desc_time:0,Stime:0,Etime:0,
-            sourcedata:[
-                {materialLink:'http://vis.ecowest.org/interactive/wildfires.php',
-                type:'typing',
-                page_id:1,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:2,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:3,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:4,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:5,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:6,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:7,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:8,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:9,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                {materialLink:'https://landsat.visibleearth.nasa.gov/view.php?id=91771',
-                type:'typing',
-                page_id:10,
-                place:'',
-                place_time:0,
-                place_acc:0.35,
-                Altername:'',
-                alter_time:0,
-                alter_acc:0.35,
-                Category:'',
-                Cate_time:0,
-                Cate_acc:0.80,
-                Description:'',
-                Desc_time:0,
-                Desc_acc:0.80,
-                Start_time:'',
-                Stime:0,
-                End_time:'',
-                Etime:0},
-                
-            ],
+            sourcedata:[],
             //variable for sound recognition
             totext:'',speechcontent:'',speechresult:'',isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
             },
         methods:{
-            //drawing part
-            start(event){
-                vm=this;
-                vm.isdraw=false;
-                switch(vm.type)
-                {   
-                    case 'circle': vm.startCircle(event); break;
-                    case 'rect': vm.startRect(event); break;
-                    case 'marker': vm.marker(event); break;
-                    case 'pencil': vm.startpencil(event); break;
-                }
-            },
-            move(event){
-                vm=this;
-                switch(vm.type)
-                {
-                    case 'circle': vm.drawCircle(event); break;
-                    case 'rect': vm.drawRect(event); break;
-                    case 'pencil':vm.drawpencil(event);break;
-                }
-            },
-            marker(event){
-                vm=this;
-                vm.drawlist.push({
-                            id:Date.now(),
-                            type:'marker',
-                            geometry:{x:event.clientX,y:event.clientY},
-                            style:{
-                                left:`${event.clientX}px`,
-                                top:`${event.clientY-55}px`,
-                                position:`absolute`,
-                                zIndex:'999'}
-                            ,selected:false});
-                vm.showmodal=true;
-            },
-            startRect(event){
-                vm=this;           
-                vm.drawlist.push({
-                    id:Date.now(),
-                    type: 'rect',
-                    geometry:{x: event.clientX, y: event.clientY-55},
-                    width: 0, 
-                    height: 0,
-                    radius: 0,
-                    rotate: 0,
-                    style:`fill:${vm.fill};stroke:${vm.stroke};strokewidth:${vm.strokeWidth};opacity:0.7`,
-                    selected:false,
-                });
-                vm.isdraw=true;
-            },
-            startCircle(event){
-                vm=this;           
-                vm.drawlist.push({
-                    id:Date.now(),
-                    type:'circle',
-                    geometry:{x: event.clientX, y: event.clientY-55},
-                    style:`fill:${vm.fill};stroke:${vm.stroke};strokewidth:${vm.strokeWidth};opacity:0.7`,
-                    radius: 0,
-                    selected:false
-                });
-                vm.isdraw=true;
-            },
-            startpencil(event){
-                vm=this;
-                vm.drawlist.push(
-                   {
-                        type: 'pencil',
-                        points: `${event.clientX},${event.clientY-55} `,
-                        style: `stroke-width:${vm.strokeWidth};stroke:${vm.stroke};fill:none`,
-                        selected:false,
-                    });
-                vm.isdraw=true;
-            },
-            drawRect(event){
-                vm=this;
-                //if leftclick and status is drawing
-                if (event.buttons == 1 && vm.isdraw){
-                    let lastRect = this.drawlist[vm.drawlist.length-1];        
-                    lastRect.height = Math.abs(event.clientY -55 - lastRect.geometry.y);
-                    lastRect.width  = Math.abs(event.clientX - lastRect.geometry.x);
-                }
-                else if (event.button == 0 && vm.isdraw){
-                    vm.isdraw=false;
-                    vm.showmodal=true;
-                }
-    
-            },
-            drawCircle(event){
-                vm=this;
-                //if leftclick and status is drawing
-                if (event.buttons == 1 && vm.isdraw){
-                    let lastCircle = this.drawlist[vm.drawlist.length-1];        
-                    let a = Math.abs(event.clientY -55 - lastCircle.geometry.y);
-                    let b = Math.abs(event.clientX - lastCircle.geometry.x);
-                    lastCircle.radius = Math.sqrt((a * a) + (b * b));
-                }
-                else if (event.button == 0 && vm.isdraw){
-                    vm.isdraw=false;
-                    vm.showmodal=true;
-                }
-            },
-            drawpencil(event){
-                vm=this;
-                if(event.buttons == 1 && vm.isdraw){
-    
-                    let lastLine = vm.drawlist[vm.drawlist.length - 1];
-                    lastLine.points += `${event.clientX},${event.clientY-55} `;
-                    
-                }
-                else if (event.buttons == 0 && vm.isdraw){
-                    
-                    vm.isdraw=false;
-                    vm.showmodal=true;
-                }
-            },
-            //data processing
-            save(item){
-                vm=this;
-                item.content = vm.content;
-                item.pattern = vm.pattern;
-                vm.close();
-                vm.content="";
-                vm.pattern="";
-            },
-            close(){
-                vm=this;
-                if (vm.isCancel){
-                    vm.cancel()
-                }
-                vm.showmodal=false;
-            },
-            cancel(){
-                vm=this;
-                vm.drawlist.pop()
-                vm.showmodal=false;
-                //要拿掉剛存進去的前一筆資料 pop
-            },
-            rm(item){
-                vm=this;
-                var newindex;
-                vm.drawlist.forEach((ele,key)=>{
-                    if(ele.id===item.id){
-                        newindex=key;
-                    }
-                });
-                vm.drawlist.splice(newindex,1);
-            },
-            modify(item){
-                vm=this;
-                vm.content = item.content;
-                vm.pattern = item.pattern;
-                vm.showmodal=true;
-            },
-            rmselected(key){
-                vm=this;
-                if (vm.selecteditem !=null ){
-                    vm.drawlist[vm.selecteditem].selected = !vm.drawlist[vm.selecteditem].selected;
-                }
-                vm.selecteditem = key;
-            },
-            record(){
-                const vm=this;
-                vm.recognition.lang = 'en-US';
-                vm.recognition.continuous = true;
-                vm.isRecord=!vm.isRecord;
-                if (vm.isRecord){
-                    vm.recognition.start();
-                    vm.recognition.onresult = function(event) {
-                        vm.speechcontent =event.results;
-                        for (let i =0; i< vm.speechcontent.length ; i++){
-                            transcript = vm.speechcontent[i][0].transcript + '. '; 
-                            vm.speechresult += transcript;
-                            vm.totext=vm.speechresult;
-                    }
-                        vm.totext=vm.speechresult;
-                    }
-                }
-                else{
-                    vm.recognition.stop();
-                    vm.speechresult='';
-                    vm.speechcontent='';
-                }
-                
-            },            
             timeresult(result){
                 vm=this;
-                console.log(result);
                 time=result[0]; field =result[1];
                 switch(field){
-                    case 'place':{
-                        vm.place_time=time;
-                        break;
-                    }
-                    case 'Altername':{
-                        vm.alter_time=time;
-                        break;
-                    }
-                    case 'Category':{
-                        vm.Cate_time=time;
-                        break;
-                    }
-                    case 'Description':{
-                        vm.Desc_time=time;
-                        break;
-                    }
-                    case 'StartTime':{
-                        vm.Stime=time;
-                        break;
-                    }
-                    case 'EndTime':{
-                        vm.Etime=time;
-                        break;
-                    }
+                    case 'place':{vm.place_time=time;break;}
+                    case 'Altername':{vm.alter_time=time;break;}
+                    case 'Category':{vm.Cate_time=time;break;}
+                    case 'Description':{vm.Desc_time=time;break;}
+                    case 'StartTime':{vm.Stime=time;break;}
+                    case 'EndTime':{vm.Etime=time;break;}
                 }
-
             },
             storeelement(page){
                 vm=this;
@@ -503,7 +281,6 @@ $( document ).ready(function(){
                 },
             checkelement(place,Altername,Category,StartTime,EndTime,Description){
                 list = [place,Altername,Category,StartTime,EndTime,Description];  
-                console.log(list);
                 return list.every(ele=>ele.length>0);
             }, 
             pageChange(dir){
@@ -522,38 +299,95 @@ $( document ).ready(function(){
                      --vm.currentpage;
                       }
             },
+            ano_pageChange(dir){
+                if (dir=='next'){++this.currentpage;}
+                else{--this.currentpage;}
+            },
+            store_sounddata(result){
+                id=result[0],element=result[1],data=result[2];
+                this.sourcedata[id][element] = data;
+            },
+            //annotation data processing
+            modal(result){
+                vm=this; vm.isAdd=result.isNew;
+                if (result.isNew){this.templist = result.data;}
+                else{
+                    vm.content=result.content;
+                    vm.pattern=result.pattern;
+                    vm.itemid=result.index;
+                }
+                this.showmodal=result.open;
+            },
+            save(){
+                vm=this;
+                if(vm.isAdd)
+                {vm.templist.content=vm.content;vm.templist.pattern=vm.pattern;
+                vm.drawlist[vm.currentpage].push(this.templist)}
+                else{
+                    vm.drawlist[vm.currentpage][vm.itemid].content=vm.content;
+                    vm.drawlist[vm.currentpage][vm.itemid].pattern=vm.pattern;
+                } 
+                vm.close();
+                vm.content=""; vm.pattern="";vm.templist='';vm.itemid=-1;
+            },
+            keycompare(item){
+                var newindex; vm=this;
+                vm.drawlist[vm.currentpage].forEach((ele,key)=>{
+                    if(ele.id===item.id){newindex=key;}
+                });
+                console.log(newindex);
+                return newindex;
+            },
+            selected(result){
+                newindex =  this.keycompare(result.data);
+                if (result.selected){
+                    stroke='#2e2d2c',fill='#e8e815',strokeWidth=5
+                switch(vm.drawlist[vm.currentpage][newindex].type){
+                    case 'rect': case 'circle':{ vm.drawlist[vm.currentpage][newindex].style=`fill:${fill};stroke:${stroke};strokewidth:${strokeWidth};opacity:0.7`;break};
+                    case 'pencil':{ vm.drawlist[vm.currentpage][newindex].style=`stroke-width:${strokeWidth};stroke:${stroke};fill:none`;break};
+                    case 'pin':{ vm.drawlist[vm.currentpage][newindex].style=`fill:${fill}`;break};
+                }
+            }else{
+                stroke='#ff0000',fill='#821717',strokeWidth=5;
+                switch(vm.drawlist[vm.currentpage][newindex].type){
+                    case 'rect': case 'circle':{ vm.drawlist[vm.currentpage][newindex].style=`fill:${fill};stroke:${stroke};strokewidth:${strokeWidth};opacity:0.7`;break};
+                    case 'pencil':{ vm.drawlist[vm.currentpage][newindex].style=`stroke-width:${strokeWidth};stroke:${stroke};fill:none`;break};
+                    case 'pin':{ vm.drawlist[vm.currentpage][newindex].style=`fill:${fill}`;break};}
+            }},
+            rm(item){
+                vm=this;
+                newindex =  this.keycompare(item);
+                vm.drawlist[vm.currentpage].splice(newindex,1);
+            },
+            close(){vm=this; vm.showmodal=false; vm.content=""; vm.pattern="";vm.templist='';vm.itemid=-1;},
+            cancel(){
+                $('#alertModal').modal('show');
+                this.isSubmit=false;
+            },
+            discard(){this.drawlist=[[],[],[],[],[]];$('#alertModal').modal('hide');},
+            submit(){this.isSubmit=true; $('#alertModal').modal('show'); this.submit();},
+            export(){$('#alertModal').modal('hide');}
+        },
+        created(){
+            if (Math.floor(Math.random(10)*10)%2==0){
+                this.casedata = [{link:'Type_annotation.html',text:'Map Annotation Creation'},{link:'Sound_Element.html',text:'Map Metadata Creation'}];}
+            else{this.casedata = [{link:'Sound_annotation.html',text:'Map Annotation Creation'},{link:'Type_Element.html',text:'Map Metadata Creation'}];}
+            xhr = new XMLHttpRequest();
+            xhr.open('GET','data/source.json',false);
+            xhr.send(null);
+            this.sourcedata=JSON.parse(xhr.responseText).data;
+            this.annotationdata=JSON.parse(xhr.responseText).annotationdata
         },
         components:{
+            'anno-component':annoComponent,
             'type-element':typeelement,
+            'row-display':rowDisplay,
+            'row-data':rowData,
+            'sound-element':soundElement,
         },
     });
 }
 );
-//speech recognition
-// recogntion = new Speechrecogntion();
-// recogntion.lang = 'en-US';
-// recogntion.continuous = true;
-// isRecord=false;
-// var content;
-// function record(){
-//     isRecord=!isRecord;
-//     var result='';
-//     if (isRecord){
-//         recogntion.start();
-//         recogntion.onresult = function(event) {
-//             content =event.results;
-//         }
-//     }
-//     else{
-//         recognition.stop();
-//         for (let i =0; i< content.length ; i++){
-//                 transcript = content[i][0].transcript + '. '; 
-//                 result += transcript;
-//             }
-//     }
-    
-//     console.log(result);
-// }
 
 ///////////////////////
 ///JsonLD Schema///////
@@ -586,6 +420,7 @@ const schema = (item,type) =>{
     JLD.innerHTML=ele;
     return JLD
 }
+
 
 
 // data send to the back_end

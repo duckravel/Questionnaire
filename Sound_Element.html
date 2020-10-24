@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<style>
+    .form-control-custom{
+        display: inline;
+    }
+    .audio-form{
+        display: flex;
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg border-bottom justify-content-between " style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
+        <div><a href="index1.html" 
+            class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
+       </div>
+        <div class='h2'>Prototype_v1</div>
+        <div><a href="index2.html" 
+             class="btn btn-sm btn-primary rounded-0 ">Submit</a>
+        </div>
+        
+    </nav>
+    <div id="app">
+      <nav class="p-2 d-flex justify-content-end">
+        <ul class="pagination" >                                 
+            <li class="page-item">
+                <a class="page-link" href="#" @click.prevent.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
+            </li>
+            <li class="page-item" v-for="page in sourcedata.length" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
+                <p class="custom-link" href="#">{{page}}</p>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" @click.prevent.prevent="pageChange('next')" v-if='currentpage!=sourcedata.length-1'>Next</a>
+            </li>
+
+        </ul>
+      </nav>
+    <sound-element v-on:catchdata='store_sounddata' v-for='(item,index) in sourcedata' :element="item" :itemid='index' :key='index'v-if ='index==currentpage'
+    ></sound-element> 
+    </div>
+</body>
+<script type='text/x-template' id='soundElement'>
+  <div class='row mb-2' id='soundheight'>
+    <div class='col-lg-4 bg-white border-right' id='data'>
+        <div class="card m-2">
+            <h5 class="card-header">Place</h5>
+            <div class="card-body">
+              <p  class="card-text" v-if="place">{{element.place}}</p>
+              <p  class="card-text" v-else >{{totext}}</p>
+              <div class="text-right">
+                <a href="#" class="btn btn-primary rounded-circle"  :class="{'btn-primary':place,'btn-danger':place==false}" 
+                @click.prevent="isRecord ? endrecord('place',itemid) : record('place',itemid); isRecord=!isRecord ;place=!place">
+                <i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+          <div class="card m-2">
+            <h5 class="card-header">Place Alais
+            </h5>
+            <div class="card-body">
+              <p class="card-text" v-if="Altername">{{element.Altername}}</p>
+              <p  class="card-text" v-else >{{totext}}</p>
+              <div class="text-right">
+                <a href="#" class="btn rounded-circle"  :class="{'btn-primary':Altername,'btn-danger':Altername==false}" 
+                @click.prevent="isRecord ? endrecord('Altername',itemid) : record('Altername',itemid); isRecord=!isRecord;Altername=!Altername"><i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+          <div class="card m-2">
+            <h5 class="card-header">Category
+            </h5>
+            <div class="card-body">
+              <p class="card-text">{{element.Category}}</p>
+              <div class="text-right">
+                <a href="#" class="btn btn-primary rounded-circle" :class="{'btn-primary':Category,'btn-danger':Category==false}"
+                @click.prevent="isRecord ? endrecord() : record('Category',itemid); isRecord=!isRecord;Category=!Category"><i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+          <div class="card m-2">
+            <h5 class="card-header">Description
+
+            </h5>
+            <div class="card-body">
+              <p class="card-text">{{element.Description}}</p>
+              <div class="text-right">
+                <a href="#" class="btn btn-primary rounded-circle" 
+                :class="{'btn-primary':Description,'btn-danger':Description==false}"
+                @click.prevent="isRecord ? endrecord() : record('Description',itemid); isRecord=!isRecord;Description=!Description"><i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+          <div class="card m-2">
+            <h5 class="card-header">Starttime
+
+            </h5>
+            <div class="card-body">
+              <p class="card-text">{{element.StartTime}}</p>
+              <div class="text-right">
+                <a href="#" class="btn btn-primary rounded-circle" :class="{'btn-primary':StartTime,'btn-danger':StartTime==false}"
+                @click.prevent="isRecord ? endrecord() : record('StartTime',itemid); isRecord=!isRecord;StartTime=!StartTime"><i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+          <div class="card m-2">
+            <h5 class="card-header">EndTime
+
+            </h5>
+            <div class="card-body">
+              <p class="card-text">{{element.EndTime}}</p>
+              <div class="text-right">
+                <a href="#" class="btn btn-primary rounded-circle" :class="{'btn-primary':EndTime,'btn-danger':EndTime==false}"
+                @click.prevent="isRecord ? endrecord('EndTime',itemid) : record('EndTime',itemid); isRecord=!isRecord;EndTime=!EndTime"><i class="fa fa-microphone" aria-hidden="true"></i></a></div>
+            </div>
+          </div>
+    </div>               
+    <div class="col-lg-8 no-gutters p-0">
+        <iframe class="w-100 h-100" 
+        frameborder="0"
+        ></iframe>
+        <!-- :src="link(element)" -->
+    </div>
+</div>
+
+</script>
+<script src="js/script.js"></script>
+</html>

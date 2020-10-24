@@ -21,7 +21,7 @@
                 class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
         </div>
             <div class='h2'>Metadata Element Creation</div>
-            <div><a href="index2.html" 
+            <div><a href="index.html" 
                 class="btn btn-sm btn-primary rounded-0 ">Submit</a>
             </div>
             
@@ -31,7 +31,7 @@
                 <li class="page-item">
                     <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
                 </li>
-                <li class="page-item" v-for="page in pages" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
+                <li class="page-item" v-for="page in sourcedata.length" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
                     <p class="custom-link" href="#">{{page}}</p>
                 </li>
                 <li class="page-item">

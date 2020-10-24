@@ -1,0 +1,1 @@
+{data:[{materialLink:'http://vis.ecowest.org/interactive/wildfires.php',type:'',page_id:1,place:'',place_time:0,place_acc:0.35,Altername:'',alter_time:0,alter_acc:0.35,Category:'',Cate_time:0,Cate_acc:0.80,Description:'',Desc_time:0,Desc_acc:0.80,Start_time:'',Stime:0,End_time:'',Etime:0}]}

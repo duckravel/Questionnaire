@@ -1,3 +1,6 @@
+svg text {
+    font-family: FontAwesome;
+ }
 .homebg{
     height: 95vh;
     width: 100vw;
@@ -17,36 +20,56 @@
     z-index: 1;
     color: #fff;
     background-color: #007bff;
-    border-color: #007bff;
+    border-color: #09090a;
 }
+
 .landpage{
     min-height: calc(100vh-(100vh - 40px -24px - 1.5rem));
 }
-.drawicon{
-    color:white; 
-}
-.drawicon:hover{
-    color:white;
-}
 #drawtoolbar{
-    position:fixed; 
-    top:70px; 
-    left:0.25rem;
-    z-index: 900;
+    position: absolute;; 
+    top:40px; 
+    z-index: 1000;
 }
-
+.contentarea{
+    padding: 40px 0 0;
+}
+.side-data{
+height: calc(100vh - 40px);
+z-index: 1000; /* Behind the navbar */
+box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1)
+}
 .svgitem{
     position: absolute;
-    z-index:800;
-    /* height: 100vh;
-    width: 100vw; */
-   
-   
+}
+.cusom-imgbg{
+    background-size:auto 100%;
+    background-repeat: no-repeat
 }
 .custom_modal{
 display: block; 
 padding-right: 18px;
 /* z-index:1000; */
+}
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #5e8097;
+  width: 32px;
+  height: 32px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .custom_container{

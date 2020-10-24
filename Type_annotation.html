@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+    <script src="https://kit.fontawesome.com/029682b453.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class='modal-open'>
+<div id='app' >
+    <div id='menu'>
+        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0 disabled"  href="#">Map Annotation</a> 
+            <div class="btn-group mr-auto" role="group"  >
+                <span class="text-white-50 nav-link">Tools:</span>
+                <button type="button" class="btn btn-dark rounded-0" @click.prevent="type='rect'"   > <i class="far fa-square fa-1x" ></i></button>
+                <button type="button" class="btn btn-dark  rounded-0" @click.prevent="type='circle'" > <i class="far fa-circle fa-1x"></i></button>
+                <button type="button" class="btn btn-dark  rounded-0" @click.prevent="type='pencil'"  > <i class="fas fa-pencil-alt fa-1x"></i></button>
+                <button type="button" class="btn btn-dark  rounded-0" @click.prevent="type='pin'" > <i class="fas fa-map-pin fa-1x"></i></button>
+            </div>            
+            <ul class="navbar-nav px-3">
+              <li class="nav-item text-nowrap">
+                <button class="btn btn-sm btn-outline-light" @click='cancel'>Discard</button>
+                <button class="btn btn-sm btn-outline-warning" @click='submit'>Submit</button>
+              </li>
+            </ul>
+          </nav>
+    </div>    
+    <div class='row no-gutters contentarea bg-light' >
+        <!-- annotate -->
+        <anno-component  :page='currentpage' :data='annotationdata' :drawingtype='type' v-on:openmodal="modal" :tempisempty='templist'>
+        </anno-component>     
+        <row-display v-for="(item,key) in drawlist[currentpage]" :arc="item" :key="key">
+        </row-display>       
+        <div class="side-data col-md-3 bg-white overflow-auto" id='data'>      
+            <nav>
+            <ul class="pagination mb-2 justify-content-end" >                                 
+                <li class="page-item" :class='{disabled:currentpage==0}'><a class="page-link" href="#" @click.prevent="ano_pageChange('pre')"><span aria-hidden="true">&laquo;</span></a></li>
+                <li class="page-item" v-for="page in annotationdata.length" :page='page':class='{active:currentpage===page-1}'>
+                    <span class="custom-link">{{page}}</span></li>
+                <li class="page-item" :class='{disabled:currentpage==annotationdata.length-1}'><a class="page-link" href="#" @click.prevent="ano_pageChange('next')"> <span aria-hidden="true">&raquo;</span></a></li>
+            </ul></nav>  
+            <!-- datalist -->
+            <row-data v-for="(item,key) in drawlist[currentpage]" :dataitem='item' :datakey='key' :key="item.id"
+            v-on:openmodal="modal" v-on:delete='rm' v-on:isselect='selected'>
+            </row-data>           
+        </div>     
+    </div>
+    <!-- pop up -->
+    <div v-if='showmodal'>    
+        <div class="modal fade show custom_modal" @mousedown.capture.stop='' id="ContentModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLiveLabel" aria-hidden="true" @keyup.esc="close()">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ContentLabel"> Content Input</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" @click.stop="close()">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="patterntype">Select the pattern</label>
+                    <select class="form-control mb-3" v-model="pattern">
+                        <option>Correlation</option>
+                        <option>Frequency</option>
+                        <option>Trend</option>
+                        <option>Outlier</option>
+                        <option>Cluster</option>
+                        <option>Distribution</option>
+                      </select>
+                    <div class="form-group">
+                        <label for="content">Please type annotation</label>
+                        <textarea class="form-control" id="content" rows="3" v-model="content" @keyup.enter="save"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click.stop="close()">Close</button>
+                    <button type="button" class="btn btn-primary" @click.stop="save">Save changes</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- AlertModal --> 
+  <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="ml-auto m-2">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container text-center" v-if='isSubmit'>
+                <p class="text-success"> <i class="far fa-check-circle fa-3x"></i></i> </p>
+                <p class='h4 mb-3'> Thanks for your contribution</p>
+                <p class="text-black-50">We are processing your data...</p>
+                <div class="d-flex justify-content-center"><div class="loader"></div></div>
+                </div>
+            <div class="container text-center" v-else>
+                <p class="text-danger"> <i class="far fa-times-circle fa-3x"></i> </p>
+                <p class='h4 mb-3'> Are you sure?</p>
+                <p class="text-black-50">Do you really want to discard your work? This process can not be undone.</p>   
+            </div>
+        </div>
+        <div class="modal-footer border-top-0 justify-content-center" v-if='isSubmit==false'>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"> Close</button>
+          <button type="button" class="btn btn-danger" @click.prevent='discard'>Discard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/x-template' id='rowDisplay'>
+        <div>
+        <svg class="svgitem w-100 h-100" style='left:0;z-index:600' >
+            <!-- pin -->
+            <text v-if="arc.type=='pin'"
+                    :x="arc.geometry.x"
+                    :y="arc.geometry.y"
+                    :style="arc.style"
+                > &#xf276</use> </text>
+            <!-- rectangle -->
+                <rect v-if="arc.type=='rect'"
+                    :x="arc.geometry.x"
+                    :y="arc.geometry.y"
+                    :width="arc.width"
+                    :height="arc.height"
+                    :style="arc.style"
+                />     
+                <!-- circle -->
+                <circle v-if="arc.type=='circle'"
+                    :cx="arc.geometry.x"
+                    :cy="arc.geometry.y"
+                    :r='arc.radius'
+                    :style='arc.style'
+                />
+                <!-- pencil -->
+                <polyline v-if="arc.type=='pencil'" 
+                    :points="arc.points"
+                    :style="arc.style"                            
+                />
+        </svg>    
+    </div>
+</div>
+</script>
+<script type='text/x-template' id='rowData'>
+    <div>
+        <div class="no-gutters border-bottom" @click="dataitem.selected=!dataitem.selected; select(dataitem.selected,dataitem)" :class="{'bg-light':dataitem.selected}">
+                <div class='pl-2 pt-2 d-flex justify-content-between mb-0'>
+                    <div><p class='text-center h5 mb-0'>{{dataitem.id}}</p>
+                        <p class="badge badge-info m-0">{{dataitem.type}}</p>
+                        <p class="badge badge-warning m-0">{{dataitem.pattern}}</p></div>
+                    <div>
+                        <button class="btn btn-outline-secondary btn-sm" @click='modify(dataitem,datakey)' >edit</button>
+                        <button class="btn btn-outline-danger btn-sm" @click="rm(dataitem)">Delete</button>
+                    </div>
+                </div>
+                <div class='pl-2  mt-1'>
+                    <p class='text-black-50'>{{dataitem.content}}</p>
+                </div>
+        </div>
+    </div>
+</script>
+
+<script type='text/x-template' id='annoComponent'>
+    <div class="col-md-9 cusom-imgbg" v-on:mousemove.stop="move"  v-on:mousedown.stop="start" :style="{backgroundImage:`url(${data[page]})`}">
+        <div v-for="(arc,index) in templist" :key='index'>
+            <svg class="svgitem w-100 h-100" style='left:0;z-index:700'>
+            <!-- pin -->
+                <text v-if="arc.type=='pin'"
+                    :x="arc.geometry.x"
+                    :y="arc.geometry.y"
+                    :style="arc.style"
+                > &#xf276 </text>
+            <!-- rectangle -->
+                <rect v-if="arc.type=='rect'"
+                    :x="arc.geometry.x"
+                    :y="arc.geometry.y"
+                    :width="arc.width"
+                    :height="arc.height"
+                    :style="arc.style"
+                />     
+                <!-- circle -->
+                <circle v-if="arc.type=='circle'"
+                    :cx="arc.geometry.x"
+                    :cy="arc.geometry.y"
+                    :r='arc.radius'
+                    :style='arc.style'
+                />
+                <!-- pencil -->
+                <polyline v-if="arc.type=='pencil'" 
+                    :points="arc.points"
+                    :style="arc.style"                            
+                />
+        </svg>                
+        </div>  
+    </div>
+</script>
+
+</body>
+<script src="./js/script.js"></script>
+</html>
