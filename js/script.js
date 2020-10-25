@@ -1,9 +1,5 @@
 //已知bug : pin的xy 不太正確
-//無法阻止同時錄製的動作QAQ 崩潰
-//圖片大小不太OK
-//時間未錄製
-//存檔案
-//指導說明頁
+//語音存檔不夠快會有問題
 
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 let recognition = SpeechRecognition? new SpeechRecognition() : false
@@ -22,24 +18,23 @@ $( document ).ready(function(){
         template:'#annoComponent',
         data:function(){return {
             templist:[{type:'pin',geometry:{x: 0, y:0},style:{fontsize:`1px`,fill:`transparent`}}],
-            isdraw:false,stroke: '#ff0000',fill: '#821717',strokeWidth: 5,rotate:0
+            annotime:[],isdraw:false,stroke: '#ff0000',fill: '#821717',strokeWidth: 5,rotate:0
         }},
         methods:{
             start(event){
                 // this.templist=[];
-                vm=this;
-                vm.isdraw=false;
+                vm=this;vm.isdraw=false;vm.annotime=[];
                 switch(this.drawingtype)
                 {   
-                    case 'circle': vm.startCircle(event); break;
-                    case 'rect': vm.startRect(event); break;
-                    case 'pin': vm.pin(event); break;
-                    case 'pencil': vm.startpencil(event); break;
+                    case 'circle': {vm.annotime.push(new Date());vm.startCircle(event); break;}
+                    case 'rect': {vm.annotime.push(new Date());vm.startRect(event); break;}
+                    case 'pin': {vm.annotime.push(new Date());vm.pin(event); break;}
+                    case 'pencil': {vm.annotime.push(new Date());vm.startpencil(event); break;}
                 }
             },
             move(event){
                 vm=this;
-                switch(this.drawingtype)
+                switch(vm.drawingtype)
                 {   
                     case 'circle': vm.drawCircle(event); break;
                     case 'rect': vm.drawRect(event); break;
@@ -52,8 +47,9 @@ $( document ).ready(function(){
                             id:Date.now(),
                             type:'pin',geometry:{x: event.clientX, y: event.clientY-40},
                             style:{fill:`${vm.fill}`},selected:false});
-                 result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
-                 this.$emit('openmodal',result);
+                            vm.annotime.push(new Date());
+                            result={open:true,isNew:true,data:vm.templist[vm.templist.length-1],annotime:vm.annotime};
+                 vm.$emit('openmodal',result);
             },
             startRect(event){
                 vm=this;           
@@ -96,7 +92,8 @@ $( document ).ready(function(){
                 }
                 else if (event.button == 0 && vm.isdraw){
                     vm.isdraw=false;
-                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    vm.annotime.push(new Date());
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1],annotime:vm.annotime};
                     this.$emit('openmodal',result);
                 }
             },
@@ -111,7 +108,8 @@ $( document ).ready(function(){
                 }
                 else if (event.button == 0 && vm.isdraw){
                     vm.isdraw=false;
-                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    vm.annotime.push(new Date());
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1],annotime:vm.annotime};
                     this.$emit('openmodal',result);
                 }
             },
@@ -123,7 +121,9 @@ $( document ).ready(function(){
                 }
                 else if (event.buttons == 0 && vm.isdraw){
                     vm.isdraw=false;
-                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    // result={open:true,isNew:true,data:vm.templist[vm.templist.length-1]};
+                    vm.annotime.push(new Date());
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1],annotime:vm.annotime};
                     this.$emit('openmodal',result);
                 }
             },
@@ -135,6 +135,11 @@ $( document ).ready(function(){
         }
     };
     //component for type element
+    var typedata ={
+        props:['element'],
+        template:'#typeData',
+        methods:{link(element){return `${element.materialLink}`}},
+    };
     var typeelement = Vue.extend({
         props:['element'],
         template:'#typeElement',
@@ -176,8 +181,8 @@ $( document ).ready(function(){
         extends:typeelement,
         data() {
             return {
-                totext:'',speechresult:[],isRecord:false,
-                place:true,Altername:true,Category:true,Description:true,EndTime:true,StartTime:true
+                totext:'',speechresult:[],isRecord:false,timelist:[],
+                recorditem:'',place:true,Altername:true,Category:true,Description:true,EndTime:true,StartTime:true
             }
         },
         methods: {
@@ -187,35 +192,58 @@ $( document ).ready(function(){
                 if (newlist.length>=2){return true}
                 else{return false}
             },
+            recordcontrol(ele,pageid){vm=this;
+                if(this.isRecord==false){
+                    vm=this; vm.isRecord=true;
+                    switch (ele){
+                        case 'place':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;}
+                        case 'Altername':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;} 
+                        case 'Category':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;} 
+                        case 'Description':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;} 
+                        case 'StartTime':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;} 
+                        case 'EndTime':{vm[ele]=false;vm.timelist.push(new Date());vm.record(ele);break;} 
+                    }
+                    this.recorditem=ele;
+                }else
+                {   this.isRecord=false;
+                    if (this.recorditem!=ele){
+                        recognition.stop();
+                        this[ele]=true;this[this.recorditem]=true;
+                        this.speechresult=[];this.totext='';this.recorditem='';
+                        alert(`Recording different items at the same time is not allowed`);
+                        return
+                    }else{
+                    switch (ele){
+                        case 'place':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                        case 'Altername':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                        case 'Category':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                        case 'Description':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                        case 'StartTime':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                        case 'EndTime':{vm.timelist.push(new Date());vm.endrecord(ele,pageid);break;}
+                    }}
+                }
+            },
             record(ele,id){
                 const vm=this;
-                // if (vm.prevent()){
-                //     alert('Recording different elements at the same time is not allowed');
-                //     vm.endrecord();
-                //     return};
                 recognition.start();
                 recognition.addEventListener('result', event => {
                     const text = Array.from(event.results).map(result => result[0]).map(result => result.transcript).join('')
                     this.totext = `${text}.`;
                     this.speechresult.push(this.totext);
                   });
-              
-        },
-            endrecord(ele,id){
-                vm=this;
-                // if (vm.prevent()){
-                //     alert('Recording different elements at the same time is not allowed');
-                //     vm.endrecord();
-                //     return};
+            },
+            endrecord(ele,pageid){
+                vm=this;console.log('stop');
                 recognition.stop();
+                this[ele]=true;
                 if (this.speechresult[this.speechresult.length-1]==undefined){
                     alert("Did not detect your voice, please record again");
                     return
                 }
-                result = [id,ele, this.speechresult[this.speechresult.length-1]]
+                result = {page:pageid,element:ele,data:this.speechresult[this.speechresult.length-1],time:this.timelist};
                 this.$emit('catchdata',result);
-                this.speechresult=[];
-                this.totext='';
+                this.speechresult=[];this.totext='';this.recorditem='';this.timelist=[];
+                
             }
         },
     };
@@ -247,12 +275,12 @@ $( document ).ready(function(){
             //data for all
             casedata:[],annotationdata:[],isSubmit:false,
             //data for annotation;
-            templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
+            patternlist:[],templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
             //pagedata for element creation
             currentpage:0,pages:10,inputs:'',inpute:'',place_time:0,alter_time:0,Cate_time:0,Cate_acc:0,Desc_time:0,Stime:0,Etime:0,
             sourcedata:[],
             //variable for sound recognition
-            totext:'',speechcontent:'',speechresult:'',isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
+           contenttimelist:[],patterntimelist:[],recorditem:'',totext:'',speechcontent:'',speechresult:[],isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
             },
         methods:{
             timeresult(result){
@@ -269,7 +297,6 @@ $( document ).ready(function(){
             },
             storeelement(page){
                 vm=this;
-                //clear the time variables for the next calculation
                 vm.sourcedata[page].place_time+=vm.place_time;
                 vm.sourcedata[page].alter_time+=vm.alter_time;
                 vm.sourcedata[page].Cate_time+=vm.Cate_time;
@@ -304,32 +331,70 @@ $( document ).ready(function(){
                 else{--this.currentpage;}
             },
             store_sounddata(result){
-                id=result[0],element=result[1],data=result[2];
-                this.sourcedata[id][element] = data;
+                vm=this;
+                page=result.page,element=result.element,data=result.data;eletime=vm.time_cal(result.time[0],result.time[1]);
+                console.log(result);
+                vm.sourcedata[page][element] = data;
+                switch(element){
+                    case 'place':{vm.sourcedata[page].place_time+=eletime;break;}
+                    case 'Altername':{vm.sourcedata[page].alter_time+=eletime;break;}
+                    case 'Category':{vm.sourcedata[page].Cate_time+=eletime;break;}
+                    case 'Description':{vm.sourcedata[page].Desc_time+=eletime;break;}
+                    case 'StartTime':{ vm.sourcedata[page].Stime+=eletime;break;}
+                    case 'EndTime':{vm.sourcedata[page].Etime+=eletime;break;}
+                }
             },
             //annotation data processing
             modal(result){
                 vm=this; vm.isAdd=result.isNew;
-                if (result.isNew){this.templist = result.data;}
+                if (result.isNew){
+                    this.templist = result.data;
+                    vm.templist.annotime = vm.time_cal(result.annotime[0],result.annotime[result.annotime.length-1]);}
                 else{
                     vm.content=result.content;
                     vm.pattern=result.pattern;
                     vm.itemid=result.index;
+                    result={open:true,isNew:true,data:vm.templist[vm.templist.length-1],annotime:time};
                 }
                 this.showmodal=result.open;
             },
-            save(){
+            watch_content(action){
                 vm=this;
+                if(action=='focus'){vm.contenttimelist.push([new Date()]);}
+                else{vm.contenttimelist[vm.contenttimelist.length-1].push(new Date());}
+            },
+            watch_pattern(action){
+                vm=this;
+                if(action=='focus'){vm.patterntimelist.push([new Date()]);}
+                else{vm.patterntimelist[vm.patterntimelist.length-1].push(new Date());}
+            },
+            save(){
+                vm=this;let patterntime=0; let contenttime=0;
+                if (vm.isRecord){alert('Please stop your recording')};
+                
+                if (vm.patterntimelist.length>0){patterntime=vm.patterntimelist.map(ele=>{return vm.time_cal(ele[0],ele[1])}).reduce((acc,cur)=>{return acc+cur});}
+                if (vm.contenttimelist.length>0){contenttime=vm.contenttimelist.map(ele=>{return vm.time_cal(ele[0],ele[1])}).reduce((acc,cur)=>{return acc+cur});}
+                console.log(patterntime);
                 if(vm.isAdd)
                 {vm.templist.content=vm.content;vm.templist.pattern=vm.pattern;
-                vm.drawlist[vm.currentpage].push(this.templist)}
+                 vm.templist.contenttime=contenttime;vm.templist.patterntime=patterntime;
+                 vm.drawlist[vm.currentpage].push(vm.templist)}
                 else{
                     vm.drawlist[vm.currentpage][vm.itemid].content=vm.content;
                     vm.drawlist[vm.currentpage][vm.itemid].pattern=vm.pattern;
+                    vm.drawlist[vm.currentpage][vm.itemid].contenttime += contenttime;
+                    vm.drawlist[vm.currentpage][vm.itemid].patterntime += patterntime;   
                 } 
                 vm.close();
-                vm.content=""; vm.pattern="";vm.templist='';vm.itemid=-1;
+                vm.content=""; vm.pattern="";vm.templist='';vm.itemid=-1;vm.patterntimelist=[];vm.contenttimelist=[];
             },
+            time_cal(t1,t2){
+                second = t2.getSeconds()-t1.getSeconds();
+                min= t2.getMinutes()-t1.getMinutes();
+                hour = t2.getHours()-t1.getHours();
+                day = t2.getDay()-t1.getDay();
+                time = (day*24*60*60)+(hour*60*60)+(min*60)+second;
+                return time},
             keycompare(item){
                 var newindex; vm=this;
                 vm.drawlist[vm.currentpage].forEach((ele,key)=>{
@@ -364,9 +429,75 @@ $( document ).ready(function(){
                 $('#alertModal').modal('show');
                 this.isSubmit=false;
             },
+            //sound annotation record
+            recordcontrol(action){
+                if(this.isRecord==false){
+                    this.isRecord=true;
+                    switch (action){
+                        case 'pattern':{this.patterntimelist.push([new Date()]);this.record();break;}
+                        case 'content':{this.contenttimelist.push([new Date()]);this.record();break;}
+                    }
+                    this.recorditem=action;
+                }else
+                {   this.isRecord=false;
+                    if (this.recorditem!=action){
+                        alert(`Recording different items at the same time is not allowed`);
+                        recognition.stop();
+                        this.isRecord=false;
+                        this.speechresult=[];this.recorditem='';
+                        return
+                    }
+                    switch (action){
+                        case 'pattern':{this.patterntimelist[this.patterntimelist.length-1].push(new Date());
+                            this.endrecordpattern();break;}
+                        case 'content':{this.contenttimelist[this.contenttimelist.length-1].push(new Date());this.endcontent();break;}
+                    }
+                }
+            },
+            record(){
+                if (this.recorditem=='pattern'){recognition.continuous=false;}else{recognition.continuous=true;};
+                recognition.start();
+                recognition.addEventListener('result', event => {
+                    const text = Array.from(event.results).map(result => result[0]).map(result => result.transcript).join('')
+                    if(this.recorditem=='content'){this.speechcontent = `${text}.`;}
+                    this.speechresult.push(text);
+                    });
+            },
+            endrecordpattern(){
+                recognition.stop();
+                word=(this.speechresult[this.speechresult.length-1]);
+                if (word==undefined){
+                    alert("Did not detect your voice, please record again");
+                    return
+                }else{word = word[0].toUpperCase() + word.substring(1);
+                isMatch = this.patternlist.some(ele=>ele==word);}
+                if(!isMatch){alert(` We detect the word '${word}', and it dosen't match any of pattern`);
+                return}else{this.pattern= word;}
+                this.speechresult=[];this.recorditem='';
+            },
+            endcontent(){
+                recognition.stop();
+                if (this.speechresult[this.speechresult.length-1]==undefined){
+                    alert("Did not detect your voice, please record again");
+                    return}
+                this.content = this.speechresult[this.speechresult.length-1]
+                this.speechresult=[];this.recorditem='';},
+            //reset and submit
             discard(){this.drawlist=[[],[],[],[],[]];$('#alertModal').modal('hide');},
-            submit(){this.isSubmit=true; $('#alertModal').modal('show'); this.submit();},
-            export(){$('#alertModal').modal('hide');}
+            submit(){this.isSubmit=true; $('#alertModal').modal('show'); this.export();},
+            export(){$('#alertModal').modal('hide');
+           const data = JSON.stringify(this.drawlist);
+                const fs = require('fs');
+                try { fs.writeFileSync('myfile.txt', data, 'utf-8'); }
+                catch(e) { alert('Failed to save the file !'); }    
+            // window.location.replace('index.html')
+        
+
+
+ file.open("write"); // open file with write access
+ file.write(str);
+ file.close();
+            }
         },
         created(){
             if (Math.floor(Math.random(10)*10)%2==0){
@@ -376,7 +507,10 @@ $( document ).ready(function(){
             xhr.open('GET','data/source.json',false);
             xhr.send(null);
             this.sourcedata=JSON.parse(xhr.responseText).data;
-            this.annotationdata=JSON.parse(xhr.responseText).annotationdata
+            this.annotationdata=JSON.parse(xhr.responseText).annotationdata;
+            xhr.open('GET','data/variable.json',false);
+            xhr.send(null);
+            this.patternlist=JSON.parse(xhr.responseText).pattern;
         },
         components:{
             'anno-component':annoComponent,
@@ -384,6 +518,7 @@ $( document ).ready(function(){
             'row-display':rowDisplay,
             'row-data':rowData,
             'sound-element':soundElement,
+            'type-data':typedata,
         },
     });
 }

@@ -66,17 +66,15 @@
                 </div>
                 <div class="modal-body">
                     <label for="patterntype">Select the pattern</label>
-                    <select class="form-control mb-3" v-model="pattern">
-                        <option>Correlation</option>
-                        <option>Frequency</option>
-                        <option>Trend</option>
-                        <option>Outlier</option>
-                        <option>Cluster</option>
-                        <option>Distribution</option>
-                      </select>
+                    <select class="form-control mb-3" v-model="pattern" @focus="watch_pattern('focus')" @blur="watch_pattern('blur')">
+                        <option v-for='(item,key) in patternlist'>{{item}}</option>
+                    </select>
                     <div class="form-group">
-                        <label for="content">Please type annotation</label>
-                        <textarea class="form-control" id="content" rows="3" v-model="content" @keyup.enter="save"></textarea>
+                        <label for="content">Type your interpretion:</label>
+                        <textarea class="form-control" id="content" rows="3" 
+                        @focus="watch_content('focus')" @blur="watch_content('blur')"
+                        v-model="content" @keyup.enter="save"
+                        ></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

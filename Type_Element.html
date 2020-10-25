@@ -16,33 +16,41 @@
 </head>
 <body>
     <div id='app'>
-        <nav class="navbar navbar-expand-lg border-bottom justify-content-between " style='background-color: rgba(255, 255, 255, 0.863);' id='menu'>
-            <div><a href="index.html" 
-                class="btn btn-sm btn-outline-secondary rounded-0 ">Previous</a>
+        <div id='menu'>
+            <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+                <a class="navbar-brand col-sm-3 col-md-2 mr-0 disabled"  href="#">Map Metadata</a> 
+                <nav class="d-flex justify-content-end">
+                    <ul class="pagination mb-0" >                                 
+                        <li class="page-item">
+                            <a class="page-link" href="#" @click.prevent.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
+                        </li>
+                        <li class="page-item" v-for="page in sourcedata.length" :page='page':class='{active:currentpage===page-1}' v-if="page<=2">
+                            <span class="custom-link" >{{page}}</span>
+                        </li>
+                        <span class="custom-link" href="#">...</span>
+                        <li class="page-item" v-for="page in sourcedata.length" :page='page':class='{active:currentpage===page-1}' v-if="page>2 && currentpage===page-1">
+                            <span class="custom-link" >{{page}}</span>
+                        </li>
+                        <li class="page-item" :class='{active:currentpage===sourcedata.length}'>
+                          <span class="custom-link">{{sourcedata.length}}</span>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" @click.prevent.prevent="pageChange('next')" v-if='currentpage!=sourcedata.length-1'>Next</a>
+                        </li>
+                    </ul>
+                  </nav>
+                <ul class="navbar-nav px-3">
+                  <li class="nav-item text-nowrap">
+                    <button class="btn btn-sm btn-outline-light" @click='cancel'>Discard</button>
+                    <button class="btn btn-sm btn-outline-warning" @click='submit'>Submit</button>
+                  </li>
+                </ul>
+              </nav>
         </div>
-            <div class='h2'>Metadata Element Creation</div>
-            <div><a href="index.html" 
-                class="btn btn-sm btn-primary rounded-0 ">Submit</a>
-            </div>
-            
-        </nav>
-        <nav class="p-2 d-flex justify-content-end">
-            <ul class="pagination" >                                 
-                <li class="page-item">
-                    <a class="page-link" href="#" @click.prevent="pageChange('pre')" v-if='currentpage!=0'>Pre</a>
-                </li>
-                <li class="page-item" v-for="page in sourcedata.length" :page='page':class='{active:currentpage===page-1}' :comPage='page-1'>
-                    <p class="custom-link" href="#">{{page}}</p>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#" @click.prevent="pageChange('next')" v-if='currentpage!=9'>Next</a>
-                </li>
-
-            </ul>
-        </nav>
-        <type-element v-for='(item,index) in sourcedata' :element="item" :key='index'v-if ='index==currentpage'
-        v-on:timelistener='timeresult'
-        ></type-element>  
+        <div class="contentarea">
+            <type-element v-for='(item,index) in sourcedata' :element="item" :key='index'v-if ='index==currentpage'
+            v-on:timelistener='timeresult' 
+            ></type-element>  </div>
     </div>
     <script type='type/x-template' id='typeElement'>
         <div class='row w-100'> 
@@ -51,9 +59,6 @@
                     <div class="form-group">
                         <label for="">Place</label>
                         <input v-model='element.place'  type="text" class="form-control" id='Place' autocomplete="off" @focus="time_in('place')" @blur="time_out('place')" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
                     </div>
                     <div class="form-group">
                         <label for="">Altername for place</label>
@@ -85,6 +90,7 @@
                 ></iframe>
         </div>
     </div>
+</div>
             
     </script>
 </body>
