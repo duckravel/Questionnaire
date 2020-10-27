@@ -273,7 +273,7 @@ $( document ).ready(function(){
         data:{
             type:'',
             //data for all
-            casedata:[],annotationdata:[],isSubmit:false,
+            casedata:[],annotationdata:[],isSubmit:false,userid:0,
             //data for annotation;
             patternlist:[],templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
             //pagedata for element creation
@@ -471,7 +471,7 @@ $( document ).ready(function(){
                     return
                 }else{word = word[0].toUpperCase() + word.substring(1);
                 isMatch = this.patternlist.some(ele=>ele==word);}
-                if(!isMatch){alert(` We detect the word '${word}', and it dosen't match any of pattern`);
+                if(!isMatch){alert(` We detect the word '${word}', and it doesn't match any of pattern`);
                 return}else{this.pattern= word;}
                 this.speechresult=[];this.recorditem='';
             },
@@ -511,6 +511,7 @@ $( document ).ready(function(){
             xhr.open('GET','data/variable.json',false);
             xhr.send(null);
             this.patternlist=JSON.parse(xhr.responseText).pattern;
+            this.userid=Date.now();
         },
         components:{
             'anno-component':annoComponent,
@@ -555,49 +556,4 @@ const schema = (item,type) =>{
     JLD.innerHTML=ele;
     return JLD
 }
-
-
-
-// data send to the back_end
-// data=[{
-// annotion:{ 
-//       participant_ID:'Al396421',
-//       scenario:'A',
-//       order:1,
-//       record_date:,
-//       type:'speech',
-//       page_id:'',
-//       materialLink:'',
-//       anno_type:'rect',
-//       anno_time:22,
-//       pattern:'distribution',
-//       pattern_time:10,
-//       content:'',
-//       content_acc: 0.35,
-//       content_time:25},
-//       metadataelement:{
-//         participant_ID:'Al396421',
-//         scenario:'A',
-//         order:1,
-    //   record_date:,
-    //     materialLink:'',
-    //     type:'speech',
-    //     page_id:'',
-    //     place:'',
-    //     place_time:25,
-    //     place_acc:0.35,
-    //     Altername:'',
-    //     alter_time:25,
-    //     alter_acc:0.35,
-    //     Category:'Geography',
-    //     Cate_time:40,
-    //     Cate_acc:0.80,
-    //     Description:'he',
-    //     Desc_time:30,
-    //     Desc_acc:0.80,
-    //     Start_time:89,
-    //     s_spent_time:25,
-    //     End_time:89,
-    //     e_spent_time:25,
-//         }}]
 
