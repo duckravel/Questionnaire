@@ -1,6 +1,3 @@
-//已知bug : pin的xy 不太正確
-//語音存檔不夠快會有問題
-
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 let recognition = SpeechRecognition? new SpeechRecognition() : false
 recognition.lang = 'en-US';
@@ -271,16 +268,15 @@ $( document ).ready(function(){
     var app = new Vue({
         el:'#app',
         data:{
-            type:'',
             //data for all
-            casedata:[],annotationdata:[],isSubmit:false,userid:0,
+            casedata:[],isSubmit:false,userid:0,
             //data for annotation;
-            patternlist:[],templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
+            contenttimelist:[],patterntimelist:[],annotationdata:[],type:'',patternlist:[],templist:'',drawlist:[[],[],[],[],[]],isAdd:true,itemid:-1,showmodal:false,content:'',pattern:'',
             //pagedata for element creation
             currentpage:0,pages:10,inputs:'',inpute:'',place_time:0,alter_time:0,Cate_time:0,Cate_acc:0,Desc_time:0,Stime:0,Etime:0,
             sourcedata:[],
             //variable for sound recognition
-           contenttimelist:[],patterntimelist:[],recorditem:'',totext:'',speechcontent:'',speechresult:[],isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
+           recorditem:'',totext:'',speechcontent:'',speechresult:[],isRecord:false,recognition:new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition ||window.msSpeechRecognition)(),
             },
         methods:{
             timeresult(result){
